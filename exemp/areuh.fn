@@ -1,0 +1,10 @@
+function fn2 (x, a)
+{
+	variable b ;
+	return a ;
+}
+
+function main (a)
+{
+	fn2 (a, 0) ;
+}

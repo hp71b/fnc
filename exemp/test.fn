@@ -1,0 +1,4 @@
+function areuh (a, b)
+{
+	return 1 ;
+}

@@ -1,0 +1,29 @@
+/*
+ * Fonction areuh
+ *
+ * a fois le nombre de nombres impairs entre 0 et b-1
+ *
+ * illustre :
+ *   boucle while
+ *   boucle for
+ *   test (if)
+ *   imbrication de structures
+ *   calcul d'expressions comme instructions
+ */
+
+function areuh (a, b)
+{
+	variable i, j, k ;		/* i, j, k = variables locales */
+
+	k = 0 ;
+	for (i=a; i; i = i-1)		/* tant que i#0, faire i=i-1 */
+	{
+		j = b ;
+		while (j)		/* tant que j#0 */
+		{
+			j = j - 1 ;
+			if (j%2) k = k+1 ;	/* si j impair, k = k+1 */
+		}
+	}
+	return k ;			/* retour de la fonction */
+}

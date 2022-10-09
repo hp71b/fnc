@@ -1,0 +1,18 @@
+function main (n)
+{
+	return pair (n) ;
+}
+
+function pair (n)
+{
+	if (n == 0) return 1 ;
+	if (impair (n-1)) return 1 ;
+	return 0 ;
+}
+
+function impair (n)
+{
+	if (n == 0) return 0 ;
+	if (pair (n-1)) return 1 ;
+	return 0 ;
+}

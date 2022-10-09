@@ -1,0 +1,134 @@
+appels de fonctions :
+
+	IDENT (
+						x_appel1() ;
+ 		 liste_arg_opt_vide )
+						x_appel3() ;
+
+liste_arg :
+	binaire
+						x_appel2() ;
+	ou bien : liste_arg , binaire
+						x_appel2() ;
+
+
+retour de fonction :
+	RETURN expression ;
+						x_return() ;
+
+
+Schema de la pile avant l'appel
+
+		|---------------|
+		|		| <------- D1
+		|		|
+		|		|
+		|  pile exec	|
+		|---------------|
+		|  var loc. 2	|
+		|---------------|
+		|  var loc. 1	|
+		|---------------|
+		|  arg 2	|
+		|---------------|
+     VARADR --> |  arg 1	|
+		|---------------|
+
+
+L'appelante sauve la valeur courante de SP dans une zone VARADRAUX, puis sauve
+les parametres fondamentaux et change le sommet de pile :
+(x_appel1())
+
+
+		|		| <------- D1
+		|---------------|
+		| SP (D1)	|
+		| ad. des var.	|
+		| ad. retour	|
+		|---------------|
+  VARADRAUX --> |		|
+		|		|
+		|		|
+		|  pile exec	|
+		|---------------|
+		|  var loc. 2	|
+		|---------------|
+		|  var loc. 1	|
+		|---------------|
+		|  arg 2	|
+		|---------------|
+     VARADR --> |  arg 1	|
+		|---------------|
+	
+L'appelante, avec SES variables, place chaque expression parametre de l'appelee
+sur sa pile, c'est a dire dans l'espace des variables de l'appelee.
+(x_appel2())
+
+		|		| <------- D1
+		|---------------|
+		|  param 3	|
+		|---------------|
+		|  param 2	|
+		|---------------|
+     VARADR --> |  param 1	|
+		|---------------|
+		| SP (D1)	|
+		| ad. des var.	|
+		| ad. retour	|
+		|---------------|
+  VARADRAUX --> |		|
+		|		|
+		|  pile exec	|
+		|---------------|
+		|  var loc. 2	|
+		|---------------|
+		|  var loc. 1	|
+		|---------------|
+		|  arg 2	|
+		|---------------|
+     		|  arg 1	|
+		|---------------|
+
+L'appelante initialise l'adresse de debut des variables (VARADR) en se basant
+sur  VARADRAUX, puis elle branche dans l'appelee. Seul PC change.
+(x_appel3)
+
+
+L'appelee declare ses variables locales (processus fait a la compilation). A
+l'execution, il suffit de deplacer le pointeur de pile D1.
+(x_actualiser_var)
+
+		|		| <------- D1
+		|---------------|
+		|  var. loc. 2	|
+		|---------------|
+		|  var. loc. 1	|
+		|---------------|
+		|  param 3	|
+		|---------------|
+		|  param 2	|
+		|---------------|
+     VARADR --> |  param 1	|
+		|---------------|
+		| SP (D1)	|
+		| ad. des var.	|
+		| ad. retour	|
+		|---------------|
+		|		|
+		|		|
+		|  pile exec	|
+		|---------------|
+		|  var loc. 2	|
+		|---------------|
+		|  var loc. 1	|
+		|---------------|
+		|  arg 2	|
+		|---------------|
+     		|  arg 1	|
+		|---------------|
+
+retour de la fonction :
+Le resultat sur la pile de l'appelee est memorise. On restaure les adresses des
+variables de l'appelante, ainsi que le sommet de sa pile. L'adresse de retour
+est recuperee, et le resultat est empile sur la pile de l'appelante.
+Branchement a l'adresse de retour.

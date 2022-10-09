@@ -1,0 +1,6 @@
+function main (n)
+{
+	variable i ;
+
+	for (i=n; i; i--) ;
+}

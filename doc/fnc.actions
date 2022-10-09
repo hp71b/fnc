@@ -1,0 +1,93 @@
+<fonction> ::=
+	<entete> <corps>
+
+<entete> ::=
+	<nom_fonction>  ( <liste_parametres> )
+				flag return := 0
+				initialiser la pile
+
+<nom_fonction> ::=
+	function <ident>
+				memoriser le nom de la fonction
+				generer jusqu'au ENDTXT
+
+<liste_parametres> ::=
+	/* vide */
+	<liste_par>
+				si le nombre de parametres > 15 alors erreur
+				generer le code :
+					point d'entree
+					allouer le buffer
+					depiler tous les parametres
+					les convertir
+					les tester
+					les stocker dans le buffer
+					sauver D0 et D1
+
+<liste_par> ::=
+	<ident>
+				si identificateur deja declare alors erreur
+				marquer l'identificateur comme parametre
+				nombre de parametres ++
+	<liste_par> , <ident>
+				si identificateur deja declare alors erreur
+				marquer l'identificateur comme parametre
+				nombre de parametres ++
+
+<corps> ::=
+	{ <liste_instructions> }
+	{ <declarations> <liste_instructions> }
+
+<declarations> ::=
+	variable <liste_var> ;
+
+<liste_var> ::=
+	<ident>
+				si identificateur deja declare alors erreur
+				marquer l'identificateur comme variable
+	<liste_var> , <ident>
+				si identificateur deja declare alors erreur
+				marquer l'identificateur comme variable
+
+<liste_instructions> ::=
+	<instruction>
+	<instruction> <liste_instructions>
+
+<instruction> ::=
+	return <expression> ;
+				si flag return alors erreur
+				generer le code de retour
+					convertir en 12 digits
+					empiler et sortir
+	<ident> = <expression> ;
+				si <ident> != variable alors erreur
+				generer le code de stockage depuis A
+
+/* toutes les expressions laissent le resultat dans A */
+
+<expression> ::=
+	<terme> + <expression>
+	<terme> - <expression>
+	<terme>
+
+<terme> ::=
+	<facteur> * <terme>
+	<facteur> / <terme>
+	<facteur> % <terme>
+	<facteur>
+
+<facteur> ::=
+	- <facteur>
+				generer POP A
+				generer A=-A
+				generer PUSH A
+	<primaire>
+
+<primaire> ::=
+	<ident>
+				generer le code de rappel dans A
+				generer PUSH A
+	<const>
+				generer LC(5) <const>
+				generer PUSH C
+	( <expression> )
