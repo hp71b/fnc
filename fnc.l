@@ -9,7 +9,7 @@
 			printf ("%-10.10s is \"%s\"\n", p, yytext) ;
 	}
 
-	s_lookup () { }
+	void s_lookup (int tok) { }
 
 #	define	token(x)	(int) "x"
 
@@ -22,8 +22,7 @@
 	struct symbtbl stable [MAXSYMB] ;
 	extern int yylval ;
 
-	s_lookup (tok)
-	int tok ;
+	void s_lookup (int tok)
 	{
 		int i, val ;
 
@@ -59,6 +58,10 @@
 
 #define	END(v)	(v-1 + sizeof v / sizeof v [0])
 static int screen () ;
+
+#define YY_NO_INPUT	1		// don't generate input() function
+#define YY_NO_UNPUT	1		// don't generate yyunput() function
+
 %}
 
 letter			[a-zA-Z_]
@@ -98,12 +101,12 @@ static struct rwtable
 	char *rw_name ;
 	int rw_yylex ;
 } rwtable [] = {	
-			"for",		token (FOR),
-			"function",	token (FUNCTION),
-			"if",		token (IF),
-			"return",	token (RETURN) ,
-			"variable",	token (VARIABLE),
-			"while",	token (WHILE),
+		    {    "for",		token (FOR),		},
+		    {    "function",	token (FUNCTION),	},
+		    {    "if",		token (IF),		},
+		    {    "return",	token (RETURN) ,	},
+		    {    "variable",	token (VARIABLE),	},
+		    {    "while",	token (WHILE),		},
 		} ;
 
 static int screen ()

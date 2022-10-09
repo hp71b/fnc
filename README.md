@@ -1,19 +1,35 @@
 # AREUH function compiler (FNC)
 
-This repository is an extension to the [AREUH](https://github.com/hp71b/areuh)
+This repository contains an extension to the
+[AREUH](https://github.com/hp71b/areuh)
 development system for the Saturn processor.
 
 ## Presentation
 
-This program is a toy compiler for a simplified language vaguely
-inspired from the C language.
+This program, **fnc**, is a toy compiler for a simplified language vaguely
+inspired from the C language. It is more a _proof of concept_ rather
+than a complete compiler. In particular, some operators are not
+implemented, even if they are specified in the Yacc grammar.
+
+## Usage
+
+The **fnc** compiler has no argument: source file is read from standard
+input, output is generated in the **a.as** file.
+
+Example:
+
+```
+    ./fnc < examples/fact.fn
+    cat a.as
+```
 
 ## History
 
-Fnc was developped for the HP-71. It was an attempt to introduce the
-C language to the Saturn processor.
+Fnc was developped for the HP-71. It was an attempt to introduce a
+subset of the C language to the Saturn processor.
 
-Original source code dates back to september 1987.
+Original source code dates back to september 1987. Conversion to
+modern C has been done in october 2022.
 
 
 ## Authors and license

@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "global.h"
 #include "symb.h"
 #include "y.tab.h"
 
@@ -18,25 +18,25 @@ int callsp ;
 int adresse ;
 int code_never_reached ;
 
-generer (label, op, mod)
-char *label, *op, *mod ;
+void
+generer (char *label, char *op, char *mod)
 {
-	if (*label)	fprintf (fout, label) ;
+	if (*label)	fprintf (fout, "%s", label) ;
 	if (*op)
 	{
 		putc ('\t', fout) ;
-		fprintf (fout, op) ;
+		fprintf (fout, "%s", op) ;
 		if (*mod)
 		{
 			putc ('\t', fout) ;
-			fprintf (fout, mod) ;
+			fprintf (fout, "%s", mod) ;
 		}
 	}
 	putc ('\n', fout) ;
 }
 
-declarer (symbole, type)
-int symbole, type ;
+void
+declarer (int symbole, int type)
 {
 	char tmp [100], tmp1 [100], tmp2 [100] ;
 
@@ -53,14 +53,13 @@ int symbole, type ;
 	adresse += 5 ;
 }
 
-generer_comm (com)
-char *com ;
+void
+generer_comm (char *com)
 {
 	generer (com, "", "") ;
 }
 
-generer_pop (reg)
-char *reg ;
+void generer_pop (char *reg)
 {
 	char tmp [100] ;
 
@@ -69,8 +68,7 @@ char *reg ;
 	generer ("", "D1=D1+", "5") ;
 }
 
-generer_push (reg)
-char *reg ;
+void generer_push (char *reg)
 {
 	char tmp [100] ;
 
@@ -79,14 +77,15 @@ char *reg ;
 	generer ("", tmp, "A") ;
 }
 
-init_output ()
+void
+init_output (void)
 {
 	if ((fout = fopen ("a.as", "w")) == NULL)
 		yyerror ("cannot open source file") ;
 }
 
-generer_getadr (v)
-int v ;
+void
+generer_getadr (int v)
 {
 	char tmp [100] ;
 
@@ -112,15 +111,15 @@ int v ;
 	generer ("", "D0=A", "") ;
 }
 
-x_entete ()
+void
+x_entete (void)
 {
 }
 
-x_nomfonction (fn)
-int fn ;
+void
+x_nomfonction (int fn)
 {
 	char tmp [100] ;
-	int i ;
 
 	stable [fn].param = IS_FN ;
 	mainfn = ! strcmp (stable [fn].name, "main") ;
@@ -134,21 +133,22 @@ int fn ;
 	generer ("", "A=0", "A") ;	/* pour l'init. des var. locales */
 }
 
-x_declarer_par (par)
-int par ;
+void
+x_declarer_par (int par)
 {
 	declarer (par, IS_PARAM) ;
 	nb_par++ ;
 }
 
-x_declarer_var (var)
-int var ;
+void
+x_declarer_var (int var)
 {
 	declarer (var, IS_VAR) ;
 	generer_push ("A") ;
 }
 
-x_endfn ()
+void
+x_endfn (void)
 {
 	char tmp [100] ;
 	int i ;
@@ -183,10 +183,9 @@ x_endfn ()
 	}
 }
 
-x_return ()
+void
+x_return (void)
 {
-	char tmp [100] ;
-
 	generer_comm ("* sortie de la fonction") ;
 	generer ("", "D0=(5)", "=VARADR") ;
 	generer ("", "C=DAT0", "A") ;
@@ -198,8 +197,8 @@ x_return ()
 	code_never_reached = (lblsp == 0) ;
 }
 
-x_affectation (var)
-int var ;
+void
+x_affectation (int var)
 {
 	char tmp [100] ;
 
@@ -219,14 +218,16 @@ int var ;
 	generer ("", "DAT0=A", "A") ;
 }
 
-x_mul ()
+void
+x_mul (void)
 {	generer_pop ("A") ;
 	generer_pop ("C") ;
 	generer ("", "GOSBVL", "=A-MULT") ;
 	generer_push ("A") ;
 }
 
-x_div ()
+void
+x_div (void)
 {
 	char tmp [100] ;
 
@@ -242,7 +243,8 @@ x_div ()
 	generer_push ("A") ;
 }
 
-x_mod ()
+void
+x_mod (void)
 {
 	char tmp [100] ;
 
@@ -258,31 +260,33 @@ x_mod ()
 	generer_push ("C") ;
 }
 
-x_chs ()
+void
+x_chs (void)
 {	generer_pop ("A") ;
 	generer ("", "A=-A", "A") ;
 	generer_push ("A") ;
 }
 
-x_ident (nom)
-int nom ;
+void
+x_ident (int nom)
 {
 	generer_getadr (nom) ;
 	generer ("", "A=DAT0", "A") ;
 	generer_push ("A") ;
 }
 
-x_const (const)
-int const ;
+void
+x_const (int cst)
 {
 	char tmp [100] ;
 
-	sprintf (tmp, "%d", stable [const].num) ;
+	sprintf (tmp, "%d", stable [cst].num) ;
 	generer ("", "LC(5)", tmp) ;
 	generer_push ("C") ;
 }
 
-x_beginwhile ()
+void
+x_beginwhile (void)
 {
 	int l ;
 	char tmp [100] ;
@@ -292,7 +296,8 @@ x_beginwhile ()
 	generer (tmp, "", "") ;
 }
 
-x_midwhile ()
+void
+x_midwhile (void)
 {
 	int l1, l2 ;
 	char tmp1 [100], tmp2 [100] ;
@@ -307,7 +312,8 @@ x_midwhile ()
 	pushlbl (l2) ;
 }
 
-x_endwhile ()
+void
+x_endwhile (void)
 {
 	int l1, l2 ;
 	char tmp1 [100], tmp2 [100] ;
@@ -320,7 +326,8 @@ x_endwhile ()
 	generer (tmp2, "", "") ;
 }
 
-x_beginfor ()
+void
+x_beginfor (void)
 {
 	int l ;
 	char tmp [100] ;
@@ -331,7 +338,8 @@ x_beginfor ()
 	generer (tmp, "", "") ;
 }
 
-x_mid1for ()
+void
+x_mid1for (void)
 {
 	int l, l1, l2, l3 ;
 	char tmp [100], tmp1 [100], tmp2 [100], tmp3[100] ;
@@ -351,7 +359,8 @@ x_mid1for ()
 	pushlbl (l3) ;
 }
 
-x_mid2for ()
+void
+x_mid2for (void)
 {
 	int l1, l2, l3, l4 ;
 	char tmp2 [100], tmp4 [100] ;
@@ -369,7 +378,8 @@ x_mid2for ()
 	pushlbl (l3) ;
 }
 
-x_endfor ()
+void
+x_endfor (void)
 {
 	int l1, l3 ;
 	char tmp1 [100], tmp3 [100] ;
@@ -382,7 +392,8 @@ x_endfor ()
 	generer (tmp1, "", "") ;
 }
 
-x_beginif ()
+void
+x_beginif (void)
 {
 	int l ;
 	char tmp1 [100], tmp2 [100] ;
@@ -398,49 +409,52 @@ x_beginif ()
 	generer (tmp1, "", "") ;
 }
 
-x_endif ()
+void
+x_endif (void)
 {
-	int l ;
 	char tmp [100] ;
 
 	mklbl (tmp, poplbl ()) ;
 	generer (tmp, "", "") ;
 }
 
-mklbl (name, l)
-char *name ;
-int l ;
+void
+mklbl (char *name, int l)
 {
 	sprintf (name, "lbl%03d", l) ;
 }
-pushlbl (l)
-int l ;
+
+void
+pushlbl (int l)
 {
 	if (lblsp < MAXLBL) lblstack [lblsp++] = l ;
 	else yyerror ("label stack overflow") ;
 }
 
-int poplbl ()
+int
+poplbl (void)
 {
-	if (lblsp) return lblstack [--lblsp] ;
-	yyerror ("mismatched structure") ;
+	if (! lblsp)
+		yyerror ("mismatched structure") ;
+	return lblstack [--lblsp] ;
 }
 
-pushcall (fn)
-int fn ;
+void
+pushcall (int fn)
 {
 	if (callsp < MAXCALL) callstack [callsp++] = fn ;
 	else yyerror ("call stack overflow") ;
 }
 
-int popcall ()
+int popcall (void)
 {
-	if (callsp) return callstack [--callsp] ;
-	yyerror ("mismatched function calls") ;
+	if (! callsp)
+		yyerror ("mismatched function calls") ;
+	return callstack [--callsp] ;
 }
 
-x_preinc (var)
-int var ;
+void
+x_preinc (int var)
 {
 	generer_getadr (var) ;
 	generer ("", "A=DAT0", "A") ;
@@ -449,8 +463,8 @@ int var ;
 	generer_push ("A") ;
 }
 
-x_predec (var)
-int var ;
+void
+x_predec (int var)
 {
 	generer_getadr (var) ;
 	generer ("", "A=DAT0", "A") ;
@@ -459,8 +473,8 @@ int var ;
 	generer_push ("A") ;
 }
 
-x_postinc (var)
-int var ;
+void
+x_postinc (int var)
 {
 	generer_getadr (var) ;
 	generer ("", "A=DAT0", "A") ;
@@ -469,8 +483,8 @@ int var ;
 	generer ("", "DAT0=A", "A") ;
 }
 
-x_postdec (var)
-int var ;
+void
+x_postdec (int var)
 {
 	generer_getadr (var) ;
 	generer ("", "A=DAT0", "A") ;
@@ -479,8 +493,8 @@ int var ;
 	generer ("", "DAT0=A", "A") ;
 }
 
-x_op (op)
-char *op ;
+void
+x_op (char *op)
 {
 	char tmp [100] ;
 
@@ -491,8 +505,8 @@ char *op ;
 	generer_push ("A") ;
 }
 
-x_cmp (op)
-char *op ;
+void
+x_cmp (char *op)
 {
 	char tmp [100] ;
 
@@ -508,24 +522,27 @@ char *op ;
 	generer_push ("C") ;
 }
 
-x_affadd (var)
-int var ;
+void
+x_affadd (int var)
+{
+    (void) var;				// XXX
+}
+
+void
+x_affsub (int var)
+{
+    (void) var;				// XXX
+}
+
+void
+x_xor (void)
 {
 }
 
-x_affsub (var)
-int var ;
+void
+x_appel1 (int fn)
 {
-}
-
-x_xor ()
-{
-}
-
-x_appel1 (fn)
-int fn ;
-{
-	char tmp [100], tmp1 [100], tmp2 [100] ;
+	char tmp [500], tmp1 [100], tmp2 [100] ;
 	int l1, l2 ;
 
 	switch (stable [fn].param)
@@ -570,12 +587,14 @@ int fn ;
 	pushcall (fn) ;
 }
 
-x_appel2 ()
+void
+x_appel2 (void)
 {
 	/* rien */
 }
 
-x_appel3 ()
+void
+x_appel3 (void)
 {
 	int l, fn ;
 	char tmp [100] ;
@@ -612,6 +631,7 @@ x_appel3 ()
 	generer ("*   la fonction reprend", "", "") ;
 }
 
-x_actualiser_var ()
+void
+x_actualiser_var (void)
 {
 }

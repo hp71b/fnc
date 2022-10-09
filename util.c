@@ -1,19 +1,26 @@
-#include <stdio.h>
+#include "global.h"
 
 extern int yynerrs ;
 extern char yytext [] ;
 extern int yyleng ;
 extern int yylineno ;
 
-main ()
+int main (int argc, char *argv[])
 {
+	if (argc != 1)
+	{
+		fprintf (stderr, "usage: %s\n\tinput: stdin\n\toutput: a.as\n",
+				argv[0]) ;
+		exit(1) ;
+	}
+
 	init_output () ;
 	yynerrs = 0 ;
 	yyparse () ;
 }
 
-yyerror (s)
-register char *s ;
+void
+yyerror (char *s)
 {
 	extern int yynerrs ;
 
@@ -23,7 +30,8 @@ register char *s ;
 	putc ('\n', stderr) ;
 }
 
-yywhere ()
+void
+yywhere (void)
 {
 	char colon = 0 ;
 

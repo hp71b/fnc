@@ -1,3 +1,7 @@
+%{
+#include "global.h"
+%}
+
 %token	'+' 
 %token	'='
 %token	'{' 
@@ -31,7 +35,6 @@
 %token	ME
 %token	PP
 %token	MM
-%token	','
 
 %right '=' PE ME
 %left '|'
